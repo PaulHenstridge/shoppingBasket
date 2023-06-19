@@ -53,13 +53,13 @@ public class ShoppingBasketTests {
         customer = new Customer("Alice", false, basket);
         basket.addItem(book); // price 15
         basket.addItem(cd); // price 10, total is over 20 so -10%
-        assertEquals(22.5, basket.calcDiscountPrice(), 0.01);
+        assertEquals(22.5, basket.calcDiscountPrice(customer.getHasLoyaltyCard()), 0.01);
     }
 
     @Test
     public void testCalcDiscountPriceWithLoyaltyCard() {
         basket.addItem(book); // price 15
         basket.addItem(cd); // price 10, total is over 20 so -10%, & -2% for loyalty card
-        assertEquals(22.05, basket.calcDiscountPriceWithLoyaltyCard(), 0.01);
+        assertEquals(22.05, basket.calcDiscountPrice(customer.getHasLoyaltyCard()), 0.01);
     }
 }

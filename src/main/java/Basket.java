@@ -37,9 +37,8 @@ public class Basket implements ITotalable {
                 .sum();
     }
 
-    @Override
-    public Double calcDiscountPrice() {
-        double discountPrice = this.shopping.entrySet().stream()
+    public Double applyBogofDiscount() {
+        return this.shopping.entrySet().stream()
                 .mapToDouble(entry -> {
                     Item item = entry.getKey();
                     int quantity = entry.getValue();
@@ -52,17 +51,24 @@ public class Basket implements ITotalable {
                     return price;
                 })
                 .sum();
-
-        if (discountPrice > 20) {
-            discountPrice *= (1 - BASKET_VALUE_DISCOUNT);
-        }
-
-        return discountPrice;
     }
 
-    public Double calcDiscountPriceWithLoyaltyCard() {
-        double discountPrice = calcDiscountPrice();
-        discountPrice *= (1 - LOYALTY_CARD_DISCOUNT);
-        return discountPrice;
+    public Double applyBasketValueDiscount(double price) {
+        if (price > 20) {
+            price *= (1 - BASKET_VALUE_DISCOUNT);
+        }
+        return price;
+    }
+
+    public Double applyLoyaltyCardDiscount(double price) {
+        price *= (1 - LOYALTY_CARD_DISCOUNT);
+        return price;
+    }
+
+    @Override
+    public Double calcDiscountPrice(boolean hasLoyaltyCard) {
+        double priceAfterBogof = applyBogofDiscount();
+        double priceAfterBasketValueDiscount = applyBasketValueDiscount(priceAfterBogof);
+        return hasLoyaltyCard ? applyLoyaltyCardDiscount(priceAfterBasketValueDiscount) : priceAfterBasketValueDiscount;
     }
 }
